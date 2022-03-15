@@ -34,4 +34,28 @@ public class SecurityController {
     public String loginPage(){
         return "loginPage";
     }
+
+
+    //antmatcher-----------------------------------------------------------------
+
+    @GetMapping("/user")
+    public String user(){
+        return "user";
+    }
+
+    @GetMapping("/admin/pay")
+    public String adminPay(){
+        return "adminPay";
+    }
+
+    @GetMapping("/admin/**")
+    public String adminAndSys(){
+        return "admin And sys";
+    }
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
+
 }
