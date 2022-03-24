@@ -1,14 +1,47 @@
 package io.security.basicsecurity;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
 
 @RestController
 public class SecurityController {
 
     @GetMapping("/")
-    public String index(){
+    public String index(HttpSession session){
+        //세션에도 저장이 된다. -> HttpSession session
+        //세션에서도 참조가 가능
+        SecurityContext attribute = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        //해당 키로꺼내오는 것도 가능하다.
+        //Object attribute 이렇게 반환이 되는데 캐스팅해준다.
+        Authentication authentication1 = attribute.getAuthentication();
+        //이렇게 반환.
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //최종적으로 인증에 성공한 객체를 담은 구현체
+
+
         return "home";
+    }
+
+    @GetMapping("/thread")
+    public String thread(HttpSession session){
+        //메인스레드하고 자식스레드 간에 시큐리티 컨텍스트 공유가 되지 않는다.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            }
+        }).start();
+
+
+        return "thread";
     }
 
     /*
